@@ -2,11 +2,14 @@ from ortools.algorithms.python import knapsack_solver
 from ortools.sat.python.cp_model import CpModel, CpSolver, OPTIMAL, FEASIBLE
 from random import randint
 from typing import List
+import pandas as pd
 
 N_ITEMS = 30
 
 
-def solve_branch_and_bound(values: List[int], weights: List[list], capacities: List[int]) -> int:
+def solve_branch_and_bound(
+    values: List[int], weights: List[list], capacities: List[int]
+) -> int:
     solver = knapsack_solver.KnapsackSolver(
         knapsack_solver.SolverType.KNAPSACK_MULTIDIMENSION_BRANCH_AND_BOUND_SOLVER,
         "KnapsackExample",
@@ -31,7 +34,25 @@ def solve_branch_and_bound(values: List[int], weights: List[list], capacities: L
 
     return total
 
-def solve_cp_sat(values: list, weights: list, capacities: list):
+
+def solve_cp_sat_single(
+    values: List[list], weights: List[list], capacities: List[list]
+):
+    assert (
+        len(weights) == 1 and len(capacities) == 1 and len(weights[0]) == len(values)
+    ), "Dimensions of arguments do not match"
+
+    model = CpModel()
+    df = pd.DataFrame(data={"weight": weights[0], "value": values})
+    bs = model.new_bool_var_series("b", df.index)
+    model.add(bs @ df["weight"] <= capacities[0])
+    model.maximize(bs @ df["value"])
+
+    solver = CpSolver()
+    status = solver.solve(model)
+
+    assert status in (OPTIMAL, FEASIBLE)
+
 
 
 
@@ -41,4 +62,3 @@ if __name__ == "__main__":
     capacities = [850]
 
     solve_branch_and_bound(values=values, weights=weights, capacities=capacities)
-
