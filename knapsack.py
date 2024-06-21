@@ -31,7 +31,7 @@ def solve_branch_and_bound(values: list, weights: list, capacities: list) -> int
 
 if __name__ == "__main__":
     values = [randint(1, 800) for _ in range(N_ITEMS)]
-    weights = [randint(1, 100) for _ in range(N_ITEMS)]
+    weights = [[randint(1, 100) for _ in range(N_ITEMS)]]
     capacities = [850]
 
     solve_branch_and_bound(values=values, weights=weights, capacities=capacities)
