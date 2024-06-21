@@ -1,5 +1,6 @@
 from ortools.sat.python.cp_model import CpModel, CpSolver, OPTIMAL, Domain, FEASIBLE
 import pandas as pd
+from google.protobuf import text_format
 
 
 def solve_simple_case():
@@ -25,8 +26,10 @@ def build_vars_from_df():
     idx = pd.Index(range(10), name="index")
     x = model.new_int_var_series("x", idx, 0, 100)
 
-    df = pd.DataFrame(data={"weight": [1 for _ in range(10)], "value": [3 for _ in range(10)]},
-                      index=["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"])
+    df = pd.DataFrame(
+        data={"weight": [1 for _ in range(10)], "value": [3 for _ in range(10)]},
+        index=["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
+    )
     bs = model.new_bool_var_series("b", df.index)
     model.Add(bs @ df["weight"] <= 100)
     model.Maximize(bs @ df["value"])
@@ -141,7 +144,7 @@ def multiply_divide_modulo():
     x = model.new_int_var(0, 100, "x")
     y = model.new_int_var(0, 100, "y")
     z = model.new_int_var(0, 100, "z")
-    xyz = model.NewIntVar(-100 * 100 * 100, 100 ** 3, "x*y*z")
+    xyz = model.NewIntVar(-100 * 100 * 100, 100**3, "x*y*z")
     model.AddMultiplicationEquality(xyz, [x, y, z])  # xyz = x*y*z
     model.AddModuloEquality(x, y, 3)  # x = y % 3
     model.AddDivisionEquality(x, y, z)  # x = y // z
@@ -180,6 +183,17 @@ def solve_tour():
 
     print("tour: ", tour)
 
+
+def export_model(model: CpModel, filename: str):
+    with open(filename, "w") as file:
+        file.write(text_format.MessageToString(model.Proto()))
+
+
+def import_model(filename: str) -> CpModel:
+    model = CpModel()
+    with open(filename, "r") as file:
+        text_format.Parse(file.read(), model.Proto())
+    return model
 
 
 if __name__ == "__main__":
