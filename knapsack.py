@@ -7,8 +7,16 @@ import pandas as pd
 N_ITEMS = 30
 
 
+def report_solution(packed_weights: list, packed_items: list, packed_values: list) -> None:
+    print(f"Total value: ", sum(packed_values))
+    print("Total weight: ", sum(packed_weights))
+    print("Packed items: ", packed_items)
+    print("Packed values: ", packed_values)
+    print("Packed weights: ", packed_weights)
+
+
 def solve_branch_and_bound(
-    values: List[int], weights: List[list], capacities: List[int]
+        values: List[int], weights: List[list], capacities: List[int]
 ) -> int:
     solver = knapsack_solver.KnapsackSolver(
         knapsack_solver.SolverType.KNAPSACK_MULTIDIMENSION_BRANCH_AND_BOUND_SOLVER,
@@ -16,8 +24,7 @@ def solve_branch_and_bound(
     )
 
     solver.init(profits=values, weights=weights, capacities=capacities)
-    total = solver.solve()
-    print(f"Total value: {total}")
+    solver.solve()
 
     packed_items, packed_values, packed_weights = [], [], []
 
@@ -29,19 +36,14 @@ def solve_branch_and_bound(
         packed_values.append(values[i])
         packed_weights.append(weights[0][i])
 
-    print("Total weight: ", sum(packed_weights))
-    print("Packed items: ", packed_items)
-    print("Packed values: ", packed_values)
-    print("Packed weights: ", packed_weights)
-
-    return total
+    report_solution(packed_weights=packed_weights, packed_values=packed_values, packed_items=packed_items)
 
 
 def solve_cp_sat_single(
-    values: List[list], weights: List[list], capacities: List[list]
+        values: List[int], weights: List[list], capacities: List[int]
 ):
     assert (
-        len(weights) == 1 and len(capacities) == 1 and len(weights[0]) == len(values)
+            len(weights) == 1 and len(capacities) == 1 and len(weights[0]) == len(values)
     ), "Dimensions of arguments do not match"
 
     model = CpModel()
@@ -65,11 +67,7 @@ def solve_cp_sat_single(
         packed_vals.append(values[i])
         packed_weights.append(weights[0][i])
 
-    print("Total value: ", sum(packed_vals))
-    print("Total weight: ", sum(packed_weights))
-    print("Packed items: ", packed_items)
-    print("Packed values: ", packed_vals)
-    print("Packed weights: ", packed_weights)
+    report_solution(packed_weights=packed_weights, packed_values=packed_vals, packed_items=packed_items)
 
 
 if __name__ == "__main__":
