@@ -1,4 +1,13 @@
-from ortools.sat.python.cp_model import CpModel, CpSolver, OPTIMAL, Domain, FEASIBLE
+from ortools.sat.python.cp_model import (
+    CpModel,
+    CpSolver,
+    OPTIMAL,
+    Domain,
+    FEASIBLE,
+    CHOOSE_FIRST,
+    SELECT_MIN_VALUE,
+    FIXED_SEARCH,
+)
 import pandas as pd
 from google.protobuf import text_format
 
@@ -194,6 +203,30 @@ def import_model(filename: str) -> CpModel:
     with open(filename, "r") as file:
         text_format.Parse(file.read(), model.Proto())
     return model
+
+
+def handle_assumptions(model: CpModel, b1, b2, b3):
+    model.add_assumptions([b1, not b2])
+    model.add_assumption(b3)
+    model.clear_assumptions()
+
+
+def hinting(model, x, y, solver):
+    model.add_hint(x, 1)  # x will probably be 1
+    model.add_hint(y, 2)  # y will probably be 2
+
+    solver.parameters.debug_crash_on_bad_hint = True  # throw error if hints are wrong
+
+
+def logging(solver: CpSolver):
+    solver.parameters.log_search_progress = True
+    solver.log_callback = print
+
+    # note: primer includes a cp-sat log analyzer tool for nice viz of search progress
+
+
+def decision_strategy(model: CpModel, x):
+    model.add_decision_strategy([x], CHOOSE_FIRST, SELECT_MIN_VALUE)
 
 
 if __name__ == "__main__":

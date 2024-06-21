@@ -6,6 +6,8 @@ import pandas as pd
 
 N_ITEMS = 30
 
+# TODO: add logging
+
 
 def report_solution(packed_weights: list, packed_items: list, packed_values: list) -> None:
     print(f"Total value: ", sum(packed_values))
