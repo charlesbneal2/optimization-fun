@@ -1,10 +1,12 @@
 from ortools.algorithms.python import knapsack_solver
+from ortools.sat.python.cp_model import CpModel, CpSolver, OPTIMAL, FEASIBLE
 from random import randint
+from typing import List
 
 N_ITEMS = 30
 
 
-def solve_branch_and_bound(values: list, weights: list, capacities: list) -> int:
+def solve_branch_and_bound(values: List[int], weights: List[list], capacities: List[int]) -> int:
     solver = knapsack_solver.KnapsackSolver(
         knapsack_solver.SolverType.KNAPSACK_MULTIDIMENSION_BRANCH_AND_BOUND_SOLVER,
         "KnapsackExample",
@@ -28,6 +30,10 @@ def solve_branch_and_bound(values: list, weights: list, capacities: list) -> int
     print("Packed weights: ", packed_weights)
 
     return total
+
+def solve_cp_sat(values: list, weights: list, capacities: list):
+
+
 
 if __name__ == "__main__":
     values = [randint(1, 800) for _ in range(N_ITEMS)]
