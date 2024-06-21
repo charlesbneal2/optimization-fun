@@ -17,7 +17,7 @@ def report_solution(packed_weights: list, packed_items: list, packed_values: lis
 
 def solve_branch_and_bound(
         values: List[int], weights: List[list], capacities: List[int]
-) -> int:
+) -> None:
     solver = knapsack_solver.KnapsackSolver(
         knapsack_solver.SolverType.KNAPSACK_MULTIDIMENSION_BRANCH_AND_BOUND_SOLVER,
         "KnapsackExample",
@@ -41,7 +41,7 @@ def solve_branch_and_bound(
 
 def solve_cp_sat_single(
         values: List[int], weights: List[list], capacities: List[int]
-):
+) -> None:
     assert (
             len(weights) == 1 and len(capacities) == 1 and len(weights[0]) == len(values)
     ), "Dimensions of arguments do not match"
