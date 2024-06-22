@@ -1,3 +1,4 @@
 ortools
 jupyter
 pandas
+pydantic
