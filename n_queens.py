@@ -17,7 +17,7 @@ class NQueensSolution(BaseModel):
     n_queens: PositiveInt
 
     @property
-    def readable(self):
+    def readable(self) -> List[List[str]]:
         res = []
 
         for solution in self.solutions:
@@ -46,11 +46,11 @@ class NQueensCallback(CpSolverSolutionCallback):
             [self.value(self.__queens[i]) for i in range(len(self.__queens))]
         )
 
-    def to_solution(self):
+    def to_solution(self) -> NQueensSolution:
         return NQueensSolution(solutions=self.solutions, n_queens=len(self.__queens))
 
 
-def cpsat_solve_n_queens(instance: NQueensInstance):
+def cpsat_solve_n_queens(instance: NQueensInstance) -> NQueensSolution:
     model = CpModel()
 
     queens = [
@@ -71,7 +71,7 @@ def cpsat_solve_n_queens(instance: NQueensInstance):
     return callback.to_solution()
 
 
-def backtracking_solve_n_queens(instance: NQueensInstance):
+def backtracking_solve_n_queens(instance: NQueensInstance) -> NQueensSolution:
     cols = set()
     pos = set()  # r + c
     neg = set()  # r - c
