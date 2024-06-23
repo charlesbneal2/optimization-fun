@@ -71,8 +71,55 @@ def cpsat_solve_n_queens(instance: NQueensInstance):
     return callback.to_solution()
 
 
+def backtracking_solve_n_queens(instance: NQueensInstance):
+    cols = set()
+    pos = set()  # r + c
+    neg = set()  # r - c
+    res = list()
+
+    board = [-1] * instance.n_queens
+
+    def backtrack(r):
+        if r == instance.n_queens:
+            res.append(board[::])
+            return
+
+        for c in range(instance.n_queens):
+            pdiag = r + c
+            ndiag = r - c
+
+            if c in cols or pdiag in pos or ndiag in neg:
+                continue
+
+            board[r] = c
+            cols.add(c)
+            pos.add(pdiag)
+            neg.add(ndiag)
+
+            backtrack(r + 1)
+
+            board[r] = -1
+            cols.remove(c)
+            pos.remove(pdiag)
+            neg.remove(ndiag)
+
+    backtrack(0)
+
+    return NQueensSolution(solutions=res, n_queens=instance.n_queens)
+
+
 if __name__ == "__main__":
-    instance = NQueensInstance(n_queens=10)
-    solution = cpsat_solve_n_queens(instance)
-    print("N solutions: ", len(solution.solutions))
-    print(solution.readable[0])
+    instance = NQueensInstance(n_queens=5)
+    c_solution = cpsat_solve_n_queens(instance)
+
+    print("--- CP-SAT ---")
+    print("N solutions: ", len(c_solution.solutions))
+    print("Example:")
+    print(c_solution.readable)
+
+    b_solution = backtracking_solve_n_queens(instance)
+    print("--- Backtracking ---")
+    print("N solutions: ", len(b_solution.solutions))
+    print(b_solution.readable)
+
+    assert len(c_solution.solutions) == len(b_solution.solutions), "Number of solutions do not match"
