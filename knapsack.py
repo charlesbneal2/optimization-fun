@@ -41,15 +41,13 @@ def report_solution(
     print("Packed weights: ", packed_weights)
 
 
-def solve_branch_and_bound(
-    values: List[int], weights: List[list], capacities: List[int]
-) -> None:
+def solve_branch_and_bound(instance: KnapsackInstance) -> None:
     solver = knapsack_solver.KnapsackSolver(
         knapsack_solver.SolverType.KNAPSACK_MULTIDIMENSION_BRANCH_AND_BOUND_SOLVER,
         "KnapsackExample",
     )
 
-    solver.init(profits=values, weights=weights, capacities=capacities)
+    solver.init(profits=instance.values, weights=instance.weights, capacities=instance.capacities)
     solver.solve()
 
     packed_items, packed_values, packed_weights = [], [], []
